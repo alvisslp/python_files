@@ -2,7 +2,10 @@
 """
 Generate CSV and SWIFT files for FISERV tests
 """
-import sys, random, time, getopt
+import sys
+import random
+import time
+import getopt
 from datetime import date
 
 PERCENT_TAB = [1, 2, 3, 4, 5, 15, 30, 40]
@@ -13,13 +16,13 @@ def usage():
     """
     Show the help message
     """
-    print """\
+    print("""\
 Generation usage : 
             -c <counterpart_number>       : set the number of counterparts (must be a multiple of 100)
             -t <max_transaction>          : set the maximum transaction number (must be a multiple of 100)
             -d <days_number>              : set the number of days with no aggregation
             -h                            : show help message
-"""
+""")
 
 def main():
     """
@@ -30,7 +33,7 @@ def main():
     try:
         opts, _ = getopt.getopt(sys.argv[1:], "hc:t:d:")
     except getopt.GetoptError as err:
-        print str(err)
+        print(str(err))
         usage()
         sys.exit(2)
 
@@ -47,7 +50,7 @@ def main():
         else:
             assert False, "unhandled option"
 
-    for day in xrange(1, max_days + 1):
+    for day in range(1, max_days + 1):
         dat = date(2008, 12, 16 + day)
         creation = Creation(ctp_n, max_transac_n, dat)
         creation.execution()
@@ -67,7 +70,7 @@ class Creation(object):
         end = time.time()
 
         create_ctp_time = end - start
-        print "Counterparts creation took : {}s".format(create_ctp_time)
+        print("Counterparts creation took : {}s".format(create_ctp_time))
         sys.stdout.flush()
 
     def execution(self):
@@ -80,16 +83,16 @@ class Creation(object):
         end = time.time()
 
         create_csv_time = end - start
-        print "CSVs creation took : {}s".format(create_csv_time)
+        print("CSVs creation took : {}s".format(create_csv_time))
         sys.stdout.flush()
 
         start = time.time()
-        for key, value in self.counterparts.iteritems():
+        for key, value in self.counterparts.items():
             self.create_swift_file(key, 'EUR', '9400120142730122', value)
         end = time.time()
 
         create_swifts_time = end - start
-        print "Swifts creation took : {}s".format(create_swifts_time)
+        print("Swifts creation took : {}s".format(create_swifts_time))
         sys.stdout.flush()
 
         self.valid()
@@ -113,19 +116,19 @@ class Creation(object):
             res2 += len(self.counterparts[ctp])
 
         if count == PERCENT_TAB and res1 == res2:
-            print "Result is valid"
+            print("Result is valid")
         elif count != PERCENT_TAB:
-            print """\
+            print("""\
         count is different from PERCENT_TAB :
         count : {}
         PERCENT_TAB ! {}
-        """.format(count, PERCENT_TAB)
+        """.format(count, PERCENT_TAB))
         else:
-            print """\
+            print("""\
         res1 and res2 are different :
         res1 : {}
         res2 : {}
-        """.format(res1, res2)
+        """.format(res1, res2))
 
     def get_per_index(self, val):
         """
@@ -165,8 +168,8 @@ class Creation(object):
         for elem in tmp:
             counterparts[elem] = {}
 
-        flow_ids = random.sample(xrange(1, size + 2), size + 1)
-        t_vals = random.sample(xrange(1, 1000 * self.max_transac_n), size + 1)
+        flow_ids = random.sample(range(1, size + 2), size + 1)
+        t_vals = random.sample(range(1, 1000 * self.max_transac_n), size + 1)
 
         for i, name in enumerate(counterparts):
             per_index = self.get_per_index(i)
