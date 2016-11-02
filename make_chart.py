@@ -3,7 +3,8 @@
 Create a graph from a file to show memory and CPU consumption
 """
 
-import getopt, sys
+import getopt
+import sys
 import plotly.plotly as py
 import plotly.graph_objs as go
 
@@ -57,22 +58,22 @@ class Graph(object):
         for index, line in enumerate(graph_f):
             if index % 4 == 0:
                 # This is the time
-                self.time_x.append(x)
+                self.time_x.append(x_val)
                 x_val += 30
             elif index % 4 == 1:
                 # This is the CPU
                 self.cpu_y.append(get_cpu(line))
             elif index % 4 == 2:
                 # This is the memory
-                self.memory_y.append(self.get_memory(line))
+                self.memory_y.append(get_memory(line))
             elif index % 4 == 3:
                 self.load_y.append(get_load(line))
 
         cpu_trace = get_trace(self.time_x, self.cpu_y, "CPU", "red")
         memory_trace = get_trace(self.time_x, self.memory_y, "MEMORY",
-                                      "blue")
+                                 "blue")
         load_trace = get_trace(self.time_x, self.load_y, "load average",
-                                    "grean")
+                               "grean")
 
         data = go.Data([cpu_trace, memory_trace, load_trace])
         layout = go.Layout(title="CPU, MEMORY consumption and load average",
@@ -86,46 +87,46 @@ class Graph(object):
         """
         py.plot(self.figure, filename='Server consumption', auto_open=False)
 
-    def get_trace(x_axis, y_axis, name, color):
-        """
-        get the trace
-        """
-        return go.Scatter(x=x_axis, y=y_axis, line=dict(color=color),
-                          mode="lines", name=name)
+def get_trace(x_axis, y_axis, name, color):
+    """
+    get the trace
+    """
+    return go.Scatter(x=x_axis, y=y_axis, line=dict(color=color),
+                      mode="lines", name=name)
 
-    def get_cpu(line):
-        """
-        get the cpu
-        """
-        return 100.0 - float(line.split()[2].split('%')[0])
+def get_cpu(line):
+    """
+    get the cpu
+    """
+    return 100.0 - float(line.split()[2].split('%')[0])
 
-    def get_load(line):
-        """
-        get the load average
-        """
-        return float(line.split(',')[0].split()[-1])
+def get_load(line):
+    """
+    get the load average
+    """
+    return float(line.split(',')[0].split()[-1])
 
-    def get_memory(line):
-        """
-        get the memory
-        """
-        spl = line.split()
-        return get_mem_value(spl)
+def get_memory(line):
+    """
+    get the memory
+    """
+    spl = line.split()
+    return get_mem_value(spl)
 
-    def get_mem_value(mem):
-        """
-        get memory value
-        """
-        total = int(mem[1].split('G')[0])
-        if mem[4][-1] == 'M':
-            used = float(mem[4].split('M')[0]) / 1024.0
-            swap_total = int(mem[7].split('G')[0])
-            swap_used = int(mem[10].split('G')[0])
-            total += swap_total - swap_used
-        else:
-            used = int(mem[4].split('G')[0])
+def get_mem_value(mem):
+    """
+    get memory value
+    """
+    total = int(mem[1].split('G')[0])
+    if mem[4][-1] == 'M':
+        used = float(mem[4].split('M')[0]) / 1024.0
+        swap_total = int(mem[7].split('G')[0])
+        swap_used = int(mem[10].split('G')[0])
+        total += swap_total - swap_used
+    else:
+        used = int(mem[4].split('G')[0])
 
-        return total - used
+    return total - used
 
 if __name__ == "__main__":
     main()
