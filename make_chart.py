@@ -51,7 +51,7 @@ class Graph(object):
 
     def make_graph(self, file_name):
         """
-        create graph
+        create graph in dict format for plotly
         """
         graph_f = open(file_name, 'r')
         x_val = 0
