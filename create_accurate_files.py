@@ -154,7 +154,7 @@ class Creation(object):
 
     def create_counterparts(self):
         """
-        Temporary method to remove create counterparts for fastening
+        Temporary method to remove create counterparts to increase speed
         """
         size = self.get_size()
 
